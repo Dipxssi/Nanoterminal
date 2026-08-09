@@ -1,0 +1,99 @@
+{
+    "id": "4e39df25-bfcf-4eb0-b878-ed35f01b3e4a",
+    "started_at": "2026-08-09T13:55:22.286543",
+    "updated_at": "2026-08-09T09:23:54.208861Z",
+    "finished_at": null,
+    "n_total_trials": 89,
+    "stats": {
+        "n_completed_trials": 54,
+        "n_errored_trials": 6,
+        "n_running_trials": 4,
+        "n_pending_trials": 31,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "nop__terminal-bench": {
+                "n_trials": 48,
+                "n_errors": 6,
+                "metrics": [
+                    {
+                        "mean": 0.0
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "reward": {
+                        "0.0": [
+                            "llm-inference-batching-scheduler__z3sZfQs",
+                            "break-filter-js-from-html__ABZinTb",
+                            "gpt2-codegolf__9Dsa6hz",
+                            "write-compressor__iCZQGbL",
+                            "winning-avg-corewars__GadkFum",
+                            "log-summary-date-ranges__DUYeHCe",
+                            "merge-diff-arc-agi-task__AQzAici",
+                            "largest-eigenval__f74sw7N",
+                            "password-recovery__886rvky",
+                            "path-tracing-reverse__zMZiMCQ",
+                            "regex-chess__JzVurh7",
+                            "reshard-c4-data__TENNDaM",
+                            "pytorch-model-cli__5nEXP8b",
+                            "portfolio-optimization__X9pHjai",
+                            "modernize-scientific-stack__GYrhLsM",
+                            "feal-linear-cryptanalysis__WqqucL4",
+                            "path-tracing__9J7pCqt",
+                            "prove-plus-comm__ioLDNoX",
+                            "caffe-cifar-10__zXrXzVe",
+                            "distribution-search__vKS29nN",
+                            "pypi-server__LDB9yRk",
+                            "adaptive-rejection-sampler__GsN64xp",
+                            "custom-memory-heap-crash__gw37Q8p",
+                            "multi-source-data-merger__RZqsvNg",
+                            "configure-git-webserver__mBvTfad",
+                            "cobol-modernization__UEWNbgt",
+                            "crack-7z-hash__4TYigqb",
+                            "compile-compcert__zrSBi6d",
+                            "headless-terminal__4NiAztv",
+                            "db-wal-recovery__two7rG8",
+                            "fix-git__xuMvLzg",
+                            "schemelike-metacircular-eval__usKMe2q",
+                            "build-pov-ray__qztVtvw",
+                            "git-multibranch__PKQ3c6J",
+                            "qemu-startup__BmkbBG4",
+                            "train-fasttext__pCcxLi4",
+                            "qemu-alpine-ssh__e28woa6",
+                            "kv-store-grpc__EDouuHj",
+                            "video-processing__tvrtH9U",
+                            "tune-mjcf__sytvgUP",
+                            "make-doom-for-mips__J9FHgEy",
+                            "gcode-to-text__3NAaJLS",
+                            "extract-moves-from-video__ZeZVhTA",
+                            "install-windows-3.11__66tk8eZ",
+                            "count-dataset-tokens__Z6Bnvcj",
+                            "circuit-fibsqrt__canfJkW",
+                            "make-mips-interpreter__eAPS9PH",
+                            "raman-fitting__HuBLLDZ"
+                        ]
+                    }
+                },
+                "exception_stats": {
+                    "EnvironmentStartTimeoutError": [
+                        "mteb-retrieve__abej59V",
+                        "hf-model-inference__qDJSaj6"
+                    ],
+                    "VerifierTimeoutError": [
+                        "torch-tensor-parallelism__Fd5AKEW"
+                    ],
+                    "RewardFileNotFoundError": [
+                        "chess-best-move__gXNWYY8",
+                        "overfull-hbox__7JwjMJi",
+                        "polyglot-rust-c__9L7ZK66"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null
+    }
+}

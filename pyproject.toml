@@ -1,0 +1,12 @@
+[project]
+name = "nanoterminal"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "google-genai>=2.17.0",
+    "harbor>=0.20.0",
+    "langfuse>=4.14.3",
+    "rich>=15.0.0",
+]

@@ -1,0 +1,53 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments & Dependency Managers
+.venv/
+env/
+venv/
+ENV/
+.uv/
+
+# Environment Variables & Secrets (CRITICAL)
+.env
+.env.local
+*.env
+
+# Agent Trajectories & Logs
+trajectories/
+*.log
+
+# Harbor & TerminalBench Benchmark Evaluation Artifacts
+.harbor/
+harbor_output/
+harbor_results/
+tbench_results/
+benchmark_sandbox/
+sandbox/
+
+# IDE & Editor Settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing & Coverage Outputs
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
