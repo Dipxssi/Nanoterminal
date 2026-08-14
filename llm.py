@@ -1,73 +1,127 @@
-from google import genai
-from google.genai import errors , types
+import os
 import time
-from langfuse import Langfuse
-from langfuse.decorators import observe 
+from dotenv import load_dotenv
+from google import genai
+from google.genai import errors, types
+try:
+    from langfuse import observe
+except ImportError:
+    # Safe fallback decorator if langfuse is missing or misconfigured
+    def observe(*args, **kwargs):
+        def decorator(func):
+            return func
+        return decorator
+load_dotenv()
 
-client = genai.Client()
+_IS_LINUX_ENV = os.environ.get("NANOTERMINAL_ENV", "").lower() == "linux"
 
-BASH_TOOL = types.Tool(
-  function_declarations=[
-    types.FunctionDeclaration(
-      name="execute_bash",
-      description="Executes a bash command in Git Bash on the user's terminal.",
-      parameters = types.Schema(
-        type = "OBJECT",
-        properties={
-        "command": types.Schema(
-          type="STRING",
-          description="The single bash command or chained commands (using &&) to execute. ",
-        )
-      },
-      required=["command"],
-      
-    ),
-    )
-  ]
-)
+_client = None
 
-SYSTEM_INSTRUCTION = """
-You are an AI CLI agent running inside Git Bash on Windows.
-Your goal is to complete user tasks by invoking the `execute_bash` function.
+
+def get_client() -> genai.Client:
+    global _client
+    if _client is None:
+        _client = genai.Client()
+    return _client
+
+
+def _shell_description() -> str:
+    if _IS_LINUX_ENV:
+        return "Executes a bash command in the Linux task environment."
+    return "Executes a bash command in Git Bash on the user's terminal."
+
+
+def _system_instruction() -> str:
+    if _IS_LINUX_ENV:
+        return """
+You are an AI CLI agent running inside a Linux terminal in a Docker task environment.
+Your goal is to complete user tasks step-by-step.
 
 Guidelines:
-1. Always call `execute_bash` with valid bash commands.
-2. If creating multi-line files, write them using 'cat << \'EOF\' > filename' inside the command.
-3. Inspect previous command execution results (STDOUT/STDERR) to decide your next action.
-
-
+1. Call `execute_bash` to run commands and inspect outputs.
+2. Work from /app unless the task says otherwise.
+3. Create or edit files with standard shell tools (cat, printf, tee, heredocs, etc.).
+4. Compile and test your work before calling `finish_task`.
+5. Once the task objective is completely met and verified, IMMEDIATELY call `finish_task`.
 """
+    return """
+You are an AI CLI agent running inside Git Bash on Windows.
+Your goal is to complete user tasks step-by-step.
+
+Guidelines:
+1. Call `execute_bash` to run commands and inspect outputs.
+2. Once the task objective is completely met, IMMEDIATELY call `finish_task`.
+"""
+
+
+TOOLS = types.Tool(
+    function_declarations=[
+        types.FunctionDeclaration(
+            name="execute_bash",
+            description=_shell_description(),
+            parameters=types.Schema(
+                type="OBJECT",
+                properties={
+                    "command": types.Schema(
+                        type="STRING",
+                        description="The single bash command or chained commands (using &&) to execute.",
+                    )
+                },
+                required=["command"],
+            ),
+        ),
+        types.FunctionDeclaration(
+            name="finish_task",
+            description="Call this function when the user's request is completely fulfilled and verified.",
+            parameters=types.Schema(
+                type="OBJECT",
+                properties={
+                    "summary": types.Schema(
+                        type="STRING",
+                        description="Brief summary of what was accomplished.",
+                    )
+                },
+                required=["summary"],
+            ),
+        ),
+    ]
+)
+
 @observe(name="gemini_command_generation")
-def ask_gemini(contents: list | str) -> str:
-    
-    for attempt in range(3):
+def ask_gemini(contents: list | str) -> tuple[str, dict]:
+    """Returns (function_name, arguments_dict)"""
+    last_error = None
+    for attempt in range(5):
         try:
-            res = client.models.generate_content(
+            res = get_client().models.generate_content(
                 model="gemini-2.5-flash",
                 contents=contents,
                 config=types.GenerateContentConfig(
-                    system_instruction=SYSTEM_INSTRUCTION,
-                    tools=[BASH_TOOL],
+                    system_instruction=_system_instruction(),
+                    tools=[TOOLS],
                     tool_config=types.ToolConfig(
                         function_calling_config=types.FunctionCallingConfig(
-                            mode="ANY"  
+                            mode="ANY"
                         )
                     ),
+                    automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
                     temperature=0.2,
                 ),
             )
 
             if res.function_calls:
                 call = res.function_calls[0]
-                return call.args.get("command", "").strip()
+                return call.name, call.args
             
-            return res.text.strip()
+            return "execute_bash", {"command": res.text.strip()}
 
         except errors.APIError as e:
-            if e.code == 429:
-                print("\n[Rate limit hit. Waiting 15 seconds before retrying...]")
-                time.sleep(15)
+            last_error = e
+            if e.code in (429, 500, 502, 503, 504):
+                wait = 10 * (attempt + 1)
+                print(f"\n[{e.code} — {e.message} — retrying in {wait}s...]")
+                time.sleep(wait)
             else:
                 raise e
 
-    raise Exception("Exhausted retries due to rate limits.")
+    raise Exception(f"Exhausted retries. Last error: {last_error}")

@@ -1177,11 +1177,12 @@ wheels = [
 [[package]]
 name = "nanoterminal"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "google-genai" },
     { name = "harbor" },
     { name = "langfuse" },
+    { name = "python-dotenv" },
     { name = "rich" },
 ]
 
@@ -1190,6 +1191,7 @@ requires-dist = [
     { name = "google-genai", specifier = ">=2.17.0" },
     { name = "harbor", specifier = ">=0.20.0" },
     { name = "langfuse", specifier = ">=4.14.3" },
+    { name = "python-dotenv", specifier = ">=1.2.2" },
     { name = "rich", specifier = ">=15.0.0" },
 ]
 

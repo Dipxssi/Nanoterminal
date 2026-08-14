@@ -8,5 +8,22 @@ dependencies = [
     "google-genai>=2.17.0",
     "harbor>=0.20.0",
     "langfuse>=4.14.3",
+    "python-dotenv>=1.2.2",
     "rich>=15.0.0",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = [
+    "agent",
+    "cli_entrypoint",
+    "executor",
+    "guardrails",
+    "harbor_agent",
+    "llm",
+    "logger",
+    "main",
 ]

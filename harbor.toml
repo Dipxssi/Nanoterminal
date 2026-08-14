@@ -1,0 +1,6 @@
+[agent]
+import_path = "harbor_agent:NanoTerminalAgent"
+
+[job]
+dataset = "terminal-bench@2.0"
+n_tasks = 1
