@@ -1,0 +1,8 @@
+# Omit job_name so Harbor creates a fresh jobs/<timestamp>/ folder each run.
+n_concurrent_trials: 1
+agents:
+  - import_path: harbor_agent:NanoTerminalAgent
+datasets:
+  - name: terminal-bench
+    version: "2.0"
+    n_tasks: 3

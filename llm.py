@@ -6,7 +6,6 @@ from google.genai import errors, types
 try:
     from langfuse import observe
 except ImportError:
-    # Safe fallback decorator if langfuse is missing or misconfigured
     def observe(*args, **kwargs):
         def decorator(func):
             return func
@@ -125,3 +124,21 @@ def ask_gemini(contents: list | str) -> tuple[str, dict]:
                 raise e
 
     raise Exception(f"Exhausted retries. Last error: {last_error}")
+
+def ask_gemini_raw(prompt: str) -> str:
+   
+    for attempt in range(3):
+        try:
+            res = get_client().models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    temperature=0.0,
+                ),
+            )
+            return res.text or ""
+        except errors.APIError as e:
+            if attempt == 2:
+                raise e
+            time.sleep(2 * (attempt + 1))
+    return ""
