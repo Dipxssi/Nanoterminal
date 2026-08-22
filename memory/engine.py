@@ -223,7 +223,10 @@ class MemoryEngine:
 
     def shutdown(self) -> None:
         if not self.buffer.is_empty():
-            self.segmenter.extract_and_store(self.buffer.get_turns())
+            try:
+                self.segmenter.extract_and_store(self.buffer.get_turns())
+            except Exception as exc:
+                print(f"[memory] shutdown extract skipped: {exc}")
             self.buffer.clear()
         self.bandit.save()
         self.plans.save()

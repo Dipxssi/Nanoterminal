@@ -1,0 +1,38 @@
+[
+  {
+    "name": "flash_legacy",
+    "model": "gemini-2.5-flash",
+    "scaffold": "legacy",
+    "thinking": "0",
+    "success": true,
+    "elapsed_sec": 16.7,
+    "notes": "Local smoke: create hello_tb.txt then finish"
+  },
+  {
+    "name": "pro_legacy",
+    "model": "gemini-3.5-flash",
+    "scaffold": "legacy",
+    "thinking": "1",
+    "success": false,
+    "elapsed_sec": 245.9,
+    "notes": "Free-tier 429 (20 RPD); over-verified without finish_task"
+  },
+  {
+    "name": "pro_hardened",
+    "model": "gemini-3.5-flash",
+    "scaffold": "hardened",
+    "thinking": "1",
+    "success": false,
+    "elapsed_sec": 627.9,
+    "notes": "Free-tier 429 exhausted mid-run after bootstrap/verify loop"
+  },
+  {
+    "name": "harbor_baseline_flash_legacy",
+    "model": "gemini-2.5-flash",
+    "scaffold": "legacy",
+    "task": "gpt2-codegolf",
+    "mean_reward": 0.0,
+    "exception": "AgentTimeoutError",
+    "job": "jobs/tb-baseline-flash-legacy"
+  }
+]

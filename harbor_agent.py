@@ -62,7 +62,7 @@ class NanoTerminalAgent(BaseInstalledAgent):
             "max_turns",
             cli="--max-turns",
             type="int",
-            default=30,
+            default=80,
         ),
         CliFlag(
             "debug_memory",
@@ -78,6 +78,41 @@ class NanoTerminalAgent(BaseInstalledAgent):
             env="GEMINI_API_KEY",
             type="str",
             env_fallback="GEMINI_API_KEY",
+        ),
+        EnvVar(
+            kwarg="nanoterminal_model",
+            env="NANOTERMINAL_MODEL",
+            type="str",
+            env_fallback="NANOTERMINAL_MODEL",
+            default="gemini-3.5-flash",
+        ),
+        EnvVar(
+            kwarg="nanoterminal_extract_model",
+            env="NANOTERMINAL_EXTRACT_MODEL",
+            type="str",
+            env_fallback="NANOTERMINAL_EXTRACT_MODEL",
+            default="gemini-2.5-flash",
+        ),
+        EnvVar(
+            kwarg="nanoterminal_thinking",
+            env="NANOTERMINAL_THINKING",
+            type="str",
+            env_fallback="NANOTERMINAL_THINKING",
+            default="1",
+        ),
+        EnvVar(
+            kwarg="nanoterminal_thinking_budget",
+            env="NANOTERMINAL_THINKING_BUDGET",
+            type="str",
+            env_fallback="NANOTERMINAL_THINKING_BUDGET",
+            default="8192",
+        ),
+        EnvVar(
+            kwarg="nanoterminal_scaffold",
+            env="NANOTERMINAL_SCAFFOLD",
+            type="str",
+            env_fallback="NANOTERMINAL_SCAFFOLD",
+            default="hardened",
         ),
     ]
 
@@ -197,6 +232,33 @@ class NanoTerminalAgent(BaseInstalledAgent):
                 "`--env-file .env` / `--ae GEMINI_API_KEY=...`."
             )
         env["GEMINI_API_KEY"] = gemini_api_key
+
+        model = (
+            self._get_env("NANOTERMINAL_MODEL")
+            or os.environ.get("NANOTERMINAL_MODEL")
+            or "gemini-3.5-flash"
+        )
+        env["NANOTERMINAL_MODEL"] = model
+        env["NANOTERMINAL_EXTRACT_MODEL"] = (
+            self._get_env("NANOTERMINAL_EXTRACT_MODEL")
+            or os.environ.get("NANOTERMINAL_EXTRACT_MODEL")
+            or "gemini-2.5-flash"
+        )
+        env["NANOTERMINAL_THINKING"] = (
+            self._get_env("NANOTERMINAL_THINKING")
+            or os.environ.get("NANOTERMINAL_THINKING")
+            or "1"
+        )
+        env["NANOTERMINAL_THINKING_BUDGET"] = (
+            self._get_env("NANOTERMINAL_THINKING_BUDGET")
+            or os.environ.get("NANOTERMINAL_THINKING_BUDGET")
+            or "8192"
+        )
+        env["NANOTERMINAL_SCAFFOLD"] = (
+            self._get_env("NANOTERMINAL_SCAFFOLD")
+            or os.environ.get("NANOTERMINAL_SCAFFOLD")
+            or "hardened"
+        )
 
         await self.exec_as_agent(
             environment,

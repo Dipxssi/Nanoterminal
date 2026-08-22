@@ -5,7 +5,8 @@ import uuid
 
 CURRENT_CWD = os.getcwd()
 
-MAX_OUTPUT_CHARS = 2000
+# Cap roughly in the Terminus/KIRA class (~30KB) to limit context bloat.
+MAX_OUTPUT_CHARS = 30000
 COMMAND_TIMEOUT_SEC = 120
 
 

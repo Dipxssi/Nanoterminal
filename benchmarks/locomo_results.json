@@ -1,0 +1,156 @@
+{
+  "data_path": "C:\\Users\\dipsh\\OneDrive\\Documents\\projects\\nanoterminal\\benchmarks\\data\\locomo10.json",
+  "ingest_mode": "dialog",
+  "provider": "groq",
+  "model": "groq:openai/gpt-oss-20b",
+  "samples": 1,
+  "questions": 10,
+  "mean_f1": 0.254,
+  "by_category": {
+    "multi_hop": 0.0,
+    "temporal": 0.3760162601626016,
+    "open_domain": 0.28571428571428575,
+    "single_hop": 0.0,
+    "adversarial": 0.0
+  },
+  "category_names": {
+    "1": "multi_hop",
+    "2": "temporal",
+    "3": "open_domain",
+    "4": "single_hop",
+    "5": "adversarial"
+  },
+  "results": [
+    {
+      "sample_id": "conv-26",
+      "turns_ingested": 35,
+      "records_in_store": 28,
+      "questions": 10,
+      "mean_f1": 0.254,
+      "qa": [
+        {
+          "question": "When did Caroline go to the LGBTQ support group?",
+          "answer": "7 May 2023",
+          "evidence": [
+            "D1:3"
+          ],
+          "category": 2,
+          "prediction": "7\u202fMay\u202f2023",
+          "memcon_action": "RETRIEVE:shallow",
+          "memory_context_chars": 177,
+          "f1": 1.0
+        },
+        {
+          "question": "When did Melanie paint a sunrise?",
+          "answer": 2022,
+          "evidence": [
+            "D1:12"
+          ],
+          "category": 2,
+          "prediction": "I don't know.",
+          "memcon_action": "RETRIEVE:medium",
+          "memory_context_chars": 403,
+          "f1": 0.0
+        },
+        {
+          "question": "What fields would Caroline be likely to pursue in her educaton?",
+          "answer": "Psychology, counseling certification",
+          "evidence": [
+            "D1:9",
+            "D1:11"
+          ],
+          "category": 3,
+          "prediction": "counseling or mental health",
+          "memcon_action": "RETRIEVE:deep",
+          "memory_context_chars": 492,
+          "f1": 0.286
+        },
+        {
+          "question": "What did Caroline research?",
+          "answer": "Adoption agencies",
+          "evidence": [
+            "D2:8"
+          ],
+          "category": 1,
+          "prediction": "She didn\u2019t specify.",
+          "memcon_action": "RETRIEVE:insight",
+          "memory_context_chars": 211,
+          "f1": 0.0
+        },
+        {
+          "question": "What is Caroline's identity?",
+          "answer": "Transgender woman",
+          "evidence": [
+            "D1:5"
+          ],
+          "category": 1,
+          "prediction": "I don\u2019t have enough information.",
+          "memcon_action": "CONSOLIDATE:maintain",
+          "memory_context_chars": 0,
+          "f1": 0.0
+        },
+        {
+          "question": "When did Melanie run a charity race?",
+          "answer": "The sunday before 25 May 2023",
+          "evidence": [
+            "D2:1"
+          ],
+          "category": 2,
+          "prediction": "I don\u2019t have that information.",
+          "memcon_action": "FORGET:evict",
+          "memory_context_chars": 0,
+          "f1": 0.0
+        },
+        {
+          "question": "When is Melanie planning on going camping?",
+          "answer": "June 2023",
+          "evidence": [
+            "D2:7"
+          ],
+          "category": 2,
+          "prediction": "June\u202f2023",
+          "memcon_action": "RETRIEVE:shallow",
+          "memory_context_chars": 303,
+          "f1": 1.0
+        },
+        {
+          "question": "What is Caroline's relationship status?",
+          "answer": "Single",
+          "evidence": [
+            "D3:13",
+            "D2:14"
+          ],
+          "category": 1,
+          "prediction": "Short answer: Not specified.",
+          "memcon_action": "RETRIEVE:shallow",
+          "memory_context_chars": 243,
+          "f1": 0.0
+        },
+        {
+          "question": "When did Caroline give a speech at a school?",
+          "answer": "The week before 9 June 2023",
+          "evidence": [
+            "D3:1"
+          ],
+          "category": 2,
+          "prediction": "8\u202fMay\u202f2023",
+          "memcon_action": "RETRIEVE:medium",
+          "memory_context_chars": 352,
+          "f1": 0.25
+        },
+        {
+          "question": "When did Caroline meet up with her friends, family, and mentors?",
+          "answer": "The week before 9 June 2023",
+          "evidence": [
+            "D3:11"
+          ],
+          "category": 2,
+          "prediction": "We need to answer: \"When did Caroline meet up with her friends, family, and mentors? Use DATE of CONVERSATION to answer with an approximate date. Short answer:\" We have context: events with dates: 8 May 2023 at 1:56 pm, 25 May 2023 at 1:14 pm. The question: \"When did Caroline meet up with her friends, family, and mentors?\" The context: Caroline said \"That's great, Mel! Taking time for yourself is so important. You're doing an awesome job looking after yourself and your family!\" That indicates she is talking about family. But the question: \"When did Caroline meet up with her friends, family, and mentors?\" The context doesn't mention meeting up. It just mentions conversation. The question likely expects approximate date: 8 May 2023 or 25 May 2023. Which one? The phrase \"meet up with her friends, family, and mentors\" might refer to the conversation itself? The context: 8 May 2023 conversation about jobs. 25 May 2023 conversation about self-care. The question: \"When did Caroline meet up with her friends, family, and mentors?\" The context doesn't mention meeting up. But maybe the conversation is with friends, family, mentors? The conversation is with Melanie. So maybe the answer: 8 May 2023. But the question: \"When did Caroline meet up with her friends, family, and mentors?\" The context: \"You're doing an awesome job looking after yourself and your family!\" That indicates she is talking about family. But the question: \"When did Caroline meet up with her friends, family, and mentors?\" The context: \"Totally agree, Mel. Relaxing and expressing ourselves is key. Well, I'm off to go do some research.\" That indicates she is going to research. Not meeting. So maybe the answer: 8 May 2023. But the question: \"Use DATE of CONVERSATION to answer with an approximate date.\" So we should answer with \"8 May 2023\" or \"25 May 2023\". Which one is more relevant? The question: \"When did Caroline meet up with her friends, family, and mentors?\" The context: \"You're doing an awesome job looking after yourself and your family!\" That is about family. But the question includes \"friends, family, and mentors.\" The conversation with Melanie might be considered friends. So maybe the answer: 8 May 202",
+          "memcon_action": "RETRIEVE:deep",
+          "memory_context_chars": 544,
+          "f1": 0.006
+        }
+      ]
+    }
+  ]
+}

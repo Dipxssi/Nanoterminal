@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 import json
 import math
 import os
@@ -16,7 +15,6 @@ from memory.state import (
     prior_for,
 )
 
-# GPT-4.1-mini defaults from MemCon Appendix C, Table 6.
 ALPHA = 0.15
 GAMMA = 0.9
 UCB_C = 1.4
@@ -26,15 +24,14 @@ LAMBDA_EFF = 0.3
 T_MAX = 30
 FLUSH_INTERVAL = 5
 
+
 _CONFIG_DIR = ".nanoterminal"
 _QTABLE_NAME = "memcon_qtable.json"
-
 
 @dataclass(frozen=True)
 class _Decision:
     state: ControllerState
     action: MemoryAction
-
 
 class MemConBandit:
     def __init__(
@@ -68,11 +65,12 @@ class MemConBandit:
 
         self.load()
 
+
     def begin_episode(self) -> None:
         self._episode.clear()
 
+
     def select_action(self, state: ControllerState) -> MemoryAction:
-        """Pick a feasible action via UCB; unvisited arms win, ties broken by prior."""
         state_key = state.to_key()
         self._ensure_state(state_key)
 
@@ -108,8 +106,8 @@ class MemConBandit:
         self._record(state, best_action)
         return best_action
 
+
     def end_episode(self, success: bool, steps: int) -> float:
-        """Apply reverse-discounted Monte-Carlo updates from the task outcome."""
         reward = self.compute_reward(success, steps)
         episode = list(self._episode)
         length = len(episode)
@@ -125,7 +123,6 @@ class MemConBandit:
         return reward
 
     def compute_reward(self, success: bool, steps: int) -> float:
-        """Table 6 / Eq. (5): success bonus, failure penalty, step-efficiency term."""
         safe_steps = max(0, int(steps))
         efficiency = LAMBDA_EFF * max(0.0, 1.0 - (safe_steps / self.t_max))
         if success:
@@ -204,8 +201,10 @@ class MemConBandit:
             if a_key not in self.counts[state_key]:
                 self.counts[state_key][a_key] = 0
 
+
     def _state_visits(self, state_key: str) -> int:
         return sum(self.counts[state_key].values())
+
 
     def _record(self, state: ControllerState, action: MemoryAction) -> None:
         state_key = state.to_key()
@@ -213,6 +212,7 @@ class MemConBandit:
         self._ensure_state(state_key)
         self.counts[state_key][a_key] += 1
         self._episode.append(_Decision(state, action))
+
 
     def _apply_q_update(
         self,

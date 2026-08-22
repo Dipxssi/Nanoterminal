@@ -20,9 +20,7 @@ MEM_SIZE_BIN_CAP = 5
 CWD_DIVISOR = 3
 CWD_BIN_CAP = 4
 
-# ---------------------------------------------------------------------------
-# Intent / phase vocabularies
-# ---------------------------------------------------------------------------
+
 
 
 class IntentType(str, Enum):
@@ -51,14 +49,8 @@ class MemoryOp(str, Enum):
     NOOP = "NOOP"
 
 
-# ---------------------------------------------------------------------------
-# Action space (MemCon Appendix C, Table 7 - preset 'default')
-# ---------------------------------------------------------------------------
-
-
 @dataclass(frozen=True)
 class MemoryAction:
-    """A memory operation together with its retrieval parameters."""
 
     op: MemoryOp
     top_k: Optional[int] = None
@@ -82,7 +74,7 @@ DEFAULT_ACTIONS: tuple[MemoryAction, ...] = (
     MemoryAction(MemoryOp.NOOP, label="skip"),
 )
 
-# Warm-start priors Q0(s, a) by operation family (Table 6).
+
 ACTION_PRIORS: dict[MemoryOp, float] = {
     MemoryOp.RETRIEVE: 0.5,
     MemoryOp.PLANINJECT: 0.3,
@@ -105,15 +97,8 @@ def _index_actions_by_op(
 _ACTIONS_BY_OP = _index_actions_by_op(DEFAULT_ACTIONS)
 
 
-# ---------------------------------------------------------------------------
-# Hashable controller state
-# ---------------------------------------------------------------------------
-
-
 @dataclass(frozen=True)
 class ControllerState:
-    """Discretized MemCon state phi(s) for a terminal session."""
-
     intent_type: str
     step_phase: str
     is_stuck: bool
@@ -132,10 +117,6 @@ class ControllerState:
             f"{self.cwd_bin}:{self.mem_size_bin}:{filled}:{plan}:{self.learning_phase}"
         )
 
-
-# ---------------------------------------------------------------------------
-# Shell-intent classifier
-# ---------------------------------------------------------------------------
 
 _QUESTION_PREFIXES = (
     "what",
@@ -364,10 +345,6 @@ def is_shell_command(query: str) -> bool:
     return _bash_which(first)
 
 
-# ---------------------------------------------------------------------------
-# Binning helpers
-# ---------------------------------------------------------------------------
-
 
 def _clamp_non_negative(value: object, default: int = 0) -> int:
     try:
@@ -412,10 +389,6 @@ def _is_stuck(
     right = current_command.strip()
     return bool(left) and left == right
 
-
-# ---------------------------------------------------------------------------
-# Public API
-# ---------------------------------------------------------------------------
 
 
 def extract_state(
