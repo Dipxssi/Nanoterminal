@@ -6,7 +6,7 @@ import time
 from rich.console import Console
 
 import executor
-from llm import ask_gemini, ask_gemini_raw, get_model_name
+from llm import ask_gemini, ask_text_raw, get_model_name
 from logger import TrajectoryLogger
 from memory.engine import MemoryEngine
 
@@ -108,7 +108,7 @@ def run_task(
     logger.set_goal(task_prompt)
 
     # Initialize Memory Engine (optionally skip Lychee LLM extract under Harbor)
-    memory_engine = MemoryEngine(llm_client=ask_gemini_raw)
+    memory_engine = MemoryEngine(llm_client=ask_text_raw)
     if _skip_lychee():
         memory_engine.segmenter.llm_client = lambda _prompt: ""
 

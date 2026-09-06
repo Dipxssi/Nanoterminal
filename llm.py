@@ -14,22 +14,6 @@ except ImportError:
 load_dotenv()
 
 
-def get_xai_api_key() -> str | None:
-    return os.environ.get("XAI_API_KEY") or os.environ.get("GROK_API_KEY")
-
-
-def require_grok_api_key() -> str:
-    key = get_xai_api_key()
-    if not key:
-        raise SystemExit(
-            "Grok provider selected but no API key found.\n"
-            "Add to .env in the project root (one line, no quotes needed):\n"
-            "  XAI_API_KEY=xai-...\n"
-            "Get a key at https://console.x.ai"
-        )
-    return key
-
-
 def get_groq_api_key() -> str | None:
     return os.environ.get("GROQ_API_KEY")
 
@@ -52,13 +36,11 @@ _IS_LINUX_ENV = os.environ.get("NANOTERMINAL_ENV", "").lower() == "linux"
 # gemini-3.6-flash free tier is very tight (~20 RPD) — prefer 3.5-flash for Harbor.
 DEFAULT_MODEL = "gemini-3.5-flash"
 DEFAULT_EXTRACT_MODEL = "gemini-2.5-flash"
-DEFAULT_GROK_MODEL = "grok-4-1-fast-non-reasoning"
 DEFAULT_GROQ_MODEL = "groq/compound-mini"
 DEFAULT_THINKING_BUDGET = 8192
-XAI_CHAT_URL = "https://api.x.ai/v1/chat/completions"
 GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions"
 
-# Cloudflare (in front of Groq/xAI) blocks Python-urllib's default User-Agent (error 1010).
+# Cloudflare (in front of Groq) blocks Python-urllib's default User-Agent (error 1010).
 _HTTP_USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
     "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -78,26 +60,15 @@ def get_extract_model_name() -> str:
 
 
 def get_llm_provider() -> str:
-    """gemini (default), groq, or grok."""
+    """Text/extract provider: groq (preferred if key set), else gemini."""
     raw = os.environ.get("NANOTERMINAL_LLM_PROVIDER", "").strip().lower()
-    if raw in ("grok", "xai"):
-        return "grok"
     if raw == "groq":
         return "groq"
     if raw in ("gemini", "google"):
         return "gemini"
     if get_groq_api_key():
         return "groq"
-    if get_xai_api_key():
-        return "grok"
     return "gemini"
-
-
-def get_grok_model_name() -> str:
-    return (
-        os.environ.get("NANOTERMINAL_GROK_MODEL", DEFAULT_GROK_MODEL).strip()
-        or DEFAULT_GROK_MODEL
-    )
 
 
 def get_groq_model_name() -> str:
@@ -450,18 +421,6 @@ def ask_gemini_raw(prompt: str) -> str:
     return ""
 
 
-def ask_grok_raw(prompt: str) -> str:
-    """Lightweight Grok/xAI text via OpenAI-compatible chat completions."""
-    return _openai_compatible_chat(
-        url=XAI_CHAT_URL,
-        api_key=get_xai_api_key(),
-        model=get_grok_model_name(),
-        prompt=prompt,
-        provider_label="grok",
-        missing_key_hint="set XAI_API_KEY in .env",
-    )
-
-
 def ask_groq_raw(prompt: str, *, max_tokens: int | None = 512) -> str:
     """Lightweight Groq text via OpenAI-compatible chat completions."""
     _groq_throttle()
@@ -486,8 +445,6 @@ def ask_text_raw(
 ) -> str:
     """Provider-routed raw text call (Lychee extract, LoCoMo QA, etc.)."""
     name = (provider or get_llm_provider()).strip().lower()
-    if name in ("grok", "xai"):
-        return ask_grok_raw(prompt)
     if name == "groq":
         tokens = 512 if max_tokens is None else max_tokens
         return ask_groq_raw(prompt, max_tokens=tokens)
@@ -496,8 +453,6 @@ def ask_text_raw(
 
 def active_text_model_label(provider: str | None = None) -> str:
     name = (provider or get_llm_provider()).strip().lower()
-    if name in ("grok", "xai"):
-        return f"grok:{get_grok_model_name()}"
     if name == "groq":
         return f"groq:{get_groq_model_name()}"
     return f"gemini:{get_extract_model_name()}"

@@ -1,5 +1,3 @@
-"""MemoryEngine: MemCon read controller + Lychee write loop."""
-
 from __future__ import annotations
 
 from pathlib import Path
@@ -58,7 +56,6 @@ class MemoryEngine:
         self.bandit.begin_episode()
 
     def note_cwd(self, cwd: str) -> None:
-        """Track unique working directories for φ(s).cwd_bin."""
         if not cwd:
             return
         normalized = str(Path(cwd))
@@ -99,12 +96,11 @@ class MemoryEngine:
         return extracted
 
     def prepare_context(self, user_query: str) -> Tuple[str, MemoryAction]:
-        """MemCon read step: select action and materialize context / maintenance."""
         self.step_index += 1
         self._current_goal = user_query
         store_size = self.store.count()
 
-        # Peek intent for plan lookup without mutating state twice.
+        
         probe = extract_state(
             user_query=user_query,
             total_records_in_store=store_size,

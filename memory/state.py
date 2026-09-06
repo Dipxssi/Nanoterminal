@@ -1,5 +1,3 @@
-
-
 from __future__ import annotations
 
 import os
@@ -19,7 +17,6 @@ MEM_SIZE_DIVISOR = 10
 MEM_SIZE_BIN_CAP = 5
 CWD_DIVISOR = 3
 CWD_BIN_CAP = 4
-
 
 
 

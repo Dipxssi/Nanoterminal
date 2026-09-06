@@ -4,8 +4,6 @@ import pytest
 
 def test_get_llm_provider_defaults_gemini(monkeypatch):
     monkeypatch.delenv("NANOTERMINAL_LLM_PROVIDER", raising=False)
-    monkeypatch.delenv("XAI_API_KEY", raising=False)
-    monkeypatch.delenv("GROK_API_KEY", raising=False)
     monkeypatch.delenv("GROQ_API_KEY", raising=False)
     assert llm.get_llm_provider() == "gemini"
 
@@ -17,9 +15,14 @@ def test_get_llm_provider_explicit_groq(monkeypatch):
 
 def test_get_llm_provider_auto_groq_from_key(monkeypatch):
     monkeypatch.delenv("NANOTERMINAL_LLM_PROVIDER", raising=False)
-    monkeypatch.delenv("XAI_API_KEY", raising=False)
     monkeypatch.setenv("GROQ_API_KEY", "gsk-test")
     assert llm.get_llm_provider() == "groq"
+
+
+def test_get_llm_provider_explicit_gemini_over_groq_key(monkeypatch):
+    monkeypatch.setenv("NANOTERMINAL_LLM_PROVIDER", "gemini")
+    monkeypatch.setenv("GROQ_API_KEY", "gsk-test")
+    assert llm.get_llm_provider() == "gemini"
 
 
 def test_ask_text_raw_routes_to_groq(monkeypatch):
@@ -49,11 +52,3 @@ def test_http_api_headers_include_user_agent():
     assert headers["Authorization"] == "Bearer test-key"
     assert "User-Agent" in headers
     assert "Mozilla" in headers["User-Agent"]
-
-
-def test_ask_text_raw_routes_to_grok(monkeypatch):
-    monkeypatch.setenv("NANOTERMINAL_LLM_PROVIDER", "grok")
-    calls: list[str] = []
-    monkeypatch.setattr(llm, "ask_grok_raw", lambda p: calls.append(p) or "ok")
-    assert llm.ask_text_raw("hello") == "ok"
-    assert calls == ["hello"]

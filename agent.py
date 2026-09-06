@@ -2,7 +2,7 @@ import sys
 from rich.console import Console
 from rich.panel import Panel
 import executor
-from llm import ask_gemini, ask_gemini_raw
+from llm import ask_gemini, ask_text_raw
 from guardrails import analyze_command_risk
 from logger import TrajectoryLogger
 from memory.engine import MemoryEngine
@@ -12,13 +12,13 @@ console = Console()
 
 console.print(
     Panel(
-        "[bold green]NanoTerminal Active (MemCon + Lychee Memory Enabled)[/bold green]\nType [bold cyan]'exit'[/bold cyan] or [bold cyan]'quit'[/bold cyan] to stop.",
+        "[bold green]NanoTerminal Active [/bold green]\nType [bold cyan]'exit'[/bold cyan] or [bold cyan]'quit'[/bold cyan] to stop.",
         title="Welcome",
     )
 )
 
-# Initialize Unified Memory Engine
-memory_engine = MemoryEngine(llm_client=ask_gemini_raw)
+
+memory_engine = MemoryEngine(llm_client=ask_text_raw)
 history = []
 
 try:
@@ -36,31 +36,31 @@ try:
             logger = TrajectoryLogger()
             logger.set_goal(goal)
 
-            # 1. MemCon Read Step: Retrieve / plan / maintain as needed
+            
             memory_context, action = memory_engine.prepare_context(goal)
             if memory_context:
                 console.print(
-                    f"[dim blue]🧠 MemCon [{action.op.value}:{action.label}] Context Injected[/dim blue]"
+                    f"[dim blue]MemCon [{action.op.value}:{action.label}] Context Injected[/dim blue]"
                 )
                 history.append(memory_context)
             elif action.op in (MemoryOp.CONSOLIDATE, MemoryOp.FORGET):
                 console.print(
-                    f"[dim blue]🧠 MemCon [{action.op.value}] maintenance[/dim blue]"
+                    f"[dim blue] MemCon [{action.op.value}] maintenance[/dim blue]"
                 )
 
-            # Observe user turn for Lychee segmentation
+            
             memory_engine.observe_turn(role="user", content=goal)
             history.append(f"User Goal: {goal}")
 
             task_success = False
+            max_turns = 25
 
-            for attempt in range(3):
-                # Re-consult MemCon when stuck so RE_RETRIEVE can fire mid-task.
+            for attempt in range(max_turns):
                 if memory_engine.consecutive_failures >= 2:
                     stuck_ctx, stuck_action = memory_engine.prepare_context(goal)
                     if stuck_ctx:
                         console.print(
-                            f"[dim blue]🧠 MemCon re-read [{stuck_action.op.value}:{stuck_action.label}][/dim blue]"
+                            f"[dim blue]MemCon re-read [{stuck_action.op.value}:{stuck_action.label}][/dim blue]"
                         )
                         history.append(stuck_ctx)
 
@@ -71,6 +71,7 @@ try:
                         if func_name == "finish_task":
                             summary = func_args.get("summary", "Done")
                             console.print(f"[bold green]✓ Completed:[/bold green] {summary}")
+                            logger.finalize(status="SUCCESS")
                             task_success = True
                             break
                         cmd = func_args.get("command", "").strip()
@@ -83,7 +84,6 @@ try:
 
                 console.print(f"[dim]Executing:[/dim] [cyan]{cmd}[/cyan]")
 
-                # High-risk guardrail check
                 is_high_risk, reason = analyze_command_risk(cmd)
 
                 if is_high_risk:
@@ -108,7 +108,6 @@ try:
                 history.append(f"Agent Action: {cmd}")
                 stdout, stderr, code = executor.run_command(cmd)
 
-                # Observe tool turn for memory extraction
                 memory_engine.observe_turn(
                     role="assistant",
                     content=f"Ran `{cmd}` with exit code {code}.\nOutput: {stdout}\nErrors: {stderr}",
@@ -134,9 +133,6 @@ try:
 
                     output_msg = f"Command Succeeded (Exit Code 0).\nSTDOUT:\n{stdout if stdout else '(no output)'}"
                     history.append(f"Observation:\n{output_msg}")
-                    logger.finalize(status="SUCCESS")
-                    task_success = True
-                    break
                 else:
                     console.print(
                         f"[bold red]✗ Failed (Exit Code {code})[/bold red]"
@@ -149,7 +145,9 @@ try:
                     )
                     history.append(f"Observation:\n{output_msg}")
 
-            # Complete MemCon episodic reinforcement learning update
+            if not task_success and logger.trajectory.get("status") == "IN_PROGRESS":
+                logger.finalize(status="MAX_TURNS")
+
             memory_engine.complete_task(success=task_success, goal=goal)
 
         except KeyboardInterrupt:

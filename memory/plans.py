@@ -1,5 +1,3 @@
-"""Lightweight success-plan index for MemCon PLANINJECT."""
-
 from __future__ import annotations
 
 import json

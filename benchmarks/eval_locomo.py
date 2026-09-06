@@ -34,13 +34,11 @@ from benchmarks.locomo.metrics import (  # noqa: E402
 )
 from llm import (  # noqa: E402
     active_text_model_label,
-    ask_grok_raw,
     ask_groq_raw,
     ask_text_raw,
     get_client,
     get_llm_provider,
     get_model_name,
-    require_grok_api_key,
     require_groq_api_key,
     _groq_qa_max_tokens,
 )
@@ -52,8 +50,6 @@ console = Console()
 
 def ask_eval_model(prompt: str, *, provider: str | None = None) -> str:
     name = (provider or get_llm_provider()).strip().lower()
-    if name in ("grok", "xai"):
-        return ask_grok_raw(prompt)
     if name == "groq":
         return ask_groq_raw(prompt, max_tokens=_groq_qa_max_tokens())
     model = get_model_name()
@@ -198,7 +194,7 @@ def run_locomo_eval(
         "ingest_mode": ingest_mode,
         "provider": provider_name,
         "model": active_text_model_label(provider_name)
-        if provider_name in ("grok", "xai", "groq")
+        if provider_name == "groq"
         else get_model_name(),
         "samples": len(results_by_sample),
         "questions": len(all_qas),
@@ -262,9 +258,9 @@ def main() -> None:
     )
     parser.add_argument(
         "--provider",
-        choices=("gemini", "groq", "grok"),
+        choices=("gemini", "groq"),
         default=None,
-        help="LLM backend for extract + QA (default: NANOTERMINAL_LLM_PROVIDER or gemini)",
+        help="LLM backend for extract + QA (default: Groq if GROQ_API_KEY set, else Gemini)",
     )
     parser.add_argument(
         "--mock-answers",
@@ -277,8 +273,6 @@ def main() -> None:
     load_dotenv(PROJECT_ROOT / ".env")
 
     provider = (args.provider or get_llm_provider()).strip().lower()
-    if provider in ("grok", "xai") and not args.mock_extract and not args.mock_answers:
-        require_grok_api_key()
     if provider == "groq" and not args.mock_extract and not args.mock_answers:
         require_groq_api_key()
 

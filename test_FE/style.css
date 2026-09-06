@@ -1,0 +1,140 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e1e2f, #252540);
+    color: #ffffff;
+}
+
+.calculator-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+.calculator {
+    background-color: #121214;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    max-width: 340px;
+}
+
+.display-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    height: 100px;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #1a1a1e;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.history {
+    font-size: 0.9rem;
+    color: #7a7a85;
+    min-height: 20px;
+    word-break: break-all;
+    text-align: right;
+    width: 100%;
+}
+
+.display {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #ffffff;
+    word-break: break-all;
+    text-align: right;
+    width: 100%;
+    white-space: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+}
+
+.display::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.btn {
+    border: none;
+    outline: none;
+    border-radius: 16px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    height: 60px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+/* Numbers */
+.btn.number {
+    background-color: #2d2d34;
+    color: #ffffff;
+}
+
+.btn.number:hover {
+    background-color: #3e3e46;
+}
+
+/* Actions (C, Backspace, %) */
+.btn.action {
+    background-color: #3e3e46;
+    color: #a5a5b2;
+}
+
+.btn.action:hover {
+    background-color: #4e4e58;
+    color: #ffffff;
+}
+
+/* Operators (+, -, *, /) */
+.btn.operator {
+    background-color: #ff9f0a;
+    color: #ffffff;
+}
+
+.btn.operator:hover {
+    background-color: #ffb23f;
+}
+
+/* Equals */
+.btn.equals {
+    background-color: #ff9f0a;
+    color: #ffffff;
+}
+
+.btn.equals:hover {
+    background-color: #ffb23f;
+}
+
+/* Double width button (0) */
+.btn.double {
+    grid-column: span 2;
+}

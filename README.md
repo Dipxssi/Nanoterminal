@@ -64,10 +64,6 @@ uv run python -m benchmarks.eval_locomo --max-samples 1 --max-questions 10 --max
 # Add to .env: GROQ_API_KEY=gsk_...
 uv run python -m benchmarks.eval_locomo --provider groq --max-samples 1 --max-questions 20 --out-file benchmarks/locomo_results.json
 
-# Full eval with Grok (requires xAI credits)
-# Add to .env: XAI_API_KEY=... and optionally NANOTERMINAL_GROK_MODEL=grok-4-1-fast-non-reasoning
-uv run python -m benchmarks.eval_locomo --provider grok --out-file benchmarks/locomo_results.json
-
 # Full eval on Gemini (needs billing / high quota; free tier ~20 RPD per model)
 uv run python -m benchmarks.eval_locomo --provider gemini --out-file benchmarks/locomo_results.json
 ```
@@ -79,13 +75,11 @@ uv run python -m benchmarks.eval_locomo --provider gemini --out-file benchmarks/
 | Variable | Default | Role |
 |---|---|---|
 | `NANOTERMINAL_MODEL` | `gemini-3.5-flash` | Agent model (`gemini-3.1-pro-preview` if billed) |
-| `NANOTERMINAL_EXTRACT_MODEL` | `gemini-2.5-flash` | Lychee extraction model (keeps agent quota free) |
-| `NANOTERMINAL_LLM_PROVIDER` | `gemini` | Set `groq` or `grok` for LoCoMo / extract |
-| `GROQ_API_KEY` | (unset) | Groq API key ([console.groq.com](https://console.groq.com)) — free tier |
+| `NANOTERMINAL_EXTRACT_MODEL` | `gemini-2.5-flash` | Lychee extraction model when provider is Gemini |
+| `NANOTERMINAL_LLM_PROVIDER` | auto | `groq` or `gemini`; if unset, Groq when `GROQ_API_KEY` is set, else Gemini |
+| `GROQ_API_KEY` | (unset) | Groq API key ([console.groq.com](https://console.groq.com)) — free tier; preferred for LoCoMo / extract |
 | `NANOTERMINAL_GROQ_MODEL` | `groq/compound-mini` | Groq model for eval / extract |
 | `NANOTERMINAL_GROQ_MIN_INTERVAL` | `2.0` | Seconds between Groq calls (TPM pacing) |
-| `XAI_API_KEY` | (unset) | Grok API key ([console.x.ai](https://console.x.ai)) — needs credits |
-| `NANOTERMINAL_GROK_MODEL` | `grok-4-1-fast-non-reasoning` | Grok model for eval / extract |
 | `NANOTERMINAL_THINKING` | `1` | Enable thinking budget on agent calls |
 | `NANOTERMINAL_THINKING_BUDGET` | `8192` | Thinking token budget |
 | `NANOTERMINAL_SCAFFOLD` | `hardened` | `hardened` or `legacy` |
